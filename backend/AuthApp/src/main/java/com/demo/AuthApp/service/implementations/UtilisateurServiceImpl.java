@@ -6,6 +6,7 @@ import com.demo.AuthApp.entity.Utilisateur;
 import com.demo.AuthApp.repository.UtilisateurRepository;
 import com.demo.AuthApp.service.UtilisateurService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class UtilisateurServiceImpl implements UtilisateurService {
 
     private final UtilisateurRepository utilisateurRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -38,10 +40,20 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     @Override
     public UserResponseDTO createdUser(UserRequestDTO userRequestDTO) {
 
-        Utilisateur userToSave = enEntity(userRequestDTO);
-        Utilisateur savedUser = utilisateurRepository.save(userToSave);
+        String email = userRequestDTO.getEmail().trim().toLowerCase();
 
-        return enDTO(savedUser);
+        if (utilisateurRepository.existsByEmail(email)) {
+            throw new RuntimeException(email);
+        }
+
+        Utilisateur utilisateur = new Utilisateur();
+
+        utilisateur.setNom(userRequestDTO.getNom());
+        utilisateur.setPrenom(userRequestDTO.getPrenom());
+        utilisateur.setEmail(email);
+        utilisateur.setMotDePasse(passwordEncoder.encode(userRequestDTO.getPassword()));
+
+        return enDTO(utilisateurRepository.save(utilisateur));
     }
 
     @Override
