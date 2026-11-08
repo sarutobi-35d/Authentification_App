@@ -20,6 +20,8 @@ public class Utilisateur {
 
     private String prenom;
 
+    private String email;
+
     private String motDePasse;
 
     private LocalDateTime accountCreatedOn = LocalDateTime.now();
