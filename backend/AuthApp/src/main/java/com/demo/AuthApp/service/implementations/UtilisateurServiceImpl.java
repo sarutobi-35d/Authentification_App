@@ -102,7 +102,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         userResponseDTO.setNom(utilisateur.getNom());
         userResponseDTO.setPrenom(utilisateur.getPrenom());
         userResponseDTO.setEmail(utilisateur.getEmail());
-        userResponseDTO.setMdp(utilisateur.getMotDePasse());
         userResponseDTO.setAccountCreatedOn(utilisateur.getAccountCreatedOn());
 
         return userResponseDTO;
