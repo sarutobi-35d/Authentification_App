@@ -1,4 +1,4 @@
-package com.demo.AuthApp.service;
+package com.demo.AuthApp.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

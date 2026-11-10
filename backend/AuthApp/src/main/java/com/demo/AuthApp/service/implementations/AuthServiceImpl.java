@@ -5,7 +5,7 @@ import com.demo.AuthApp.dto.LoginResponseDTO;
 import com.demo.AuthApp.entity.Utilisateur;
 import com.demo.AuthApp.repository.UtilisateurRepository;
 import com.demo.AuthApp.service.AuthService;
-import com.demo.AuthApp.service.JwtService;
+import com.demo.AuthApp.config.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
