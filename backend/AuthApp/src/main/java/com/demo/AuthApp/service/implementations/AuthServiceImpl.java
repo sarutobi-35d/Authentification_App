@@ -5,6 +5,7 @@ import com.demo.AuthApp.dto.LoginResponseDTO;
 import com.demo.AuthApp.entity.Utilisateur;
 import com.demo.AuthApp.repository.UtilisateurRepository;
 import com.demo.AuthApp.service.AuthService;
+import com.demo.AuthApp.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -17,6 +18,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final UtilisateurRepository utilisateurRepository;
+    private final JwtService jwtService;
 
     @Override
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
@@ -29,11 +31,14 @@ public class AuthServiceImpl implements AuthService {
         Utilisateur utilisateur = utilisateurRepository.findByEmail(email)
                 .orElseThrow(() -> new BadCredentialsException("Identifiants invalides"));
 
+        String token = jwtService.generateToken(utilisateur.getEmail());
+
         return new LoginResponseDTO(
                 utilisateur.getId(),
                 utilisateur.getNom(),
                 utilisateur.getPrenom(),
-                utilisateur.getEmail()
+                utilisateur.getEmail(),
+                token
         );
     }
 }
