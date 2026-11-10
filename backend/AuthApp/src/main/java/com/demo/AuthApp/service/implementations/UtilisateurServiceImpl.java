@@ -3,6 +3,8 @@ package com.demo.AuthApp.service.implementations;
 import com.demo.AuthApp.dto.UserRequestDTO;
 import com.demo.AuthApp.dto.UserResponseDTO;
 import com.demo.AuthApp.entity.Utilisateur;
+import com.demo.AuthApp.exception.EmailAlreadyUsedException;
+import com.demo.AuthApp.exception.ResourceNotFoundException;
 import com.demo.AuthApp.repository.UtilisateurRepository;
 import com.demo.AuthApp.service.UtilisateurService;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +22,16 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     private final UtilisateurRepository utilisateurRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private Utilisateur chercherParId(Long id) {
+        return utilisateurRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Aucun utilisateur trouvé avec l'id : " + id));
+    }
+
     @Override
     @Transactional(readOnly = true)
     public UserResponseDTO trouverUser(Long id) {
-        return utilisateurRepository.findById(id)
-                .map(this::enDTO)
-                .orElseThrow(() -> new RuntimeException("Aucun utilisateur trouvé avec l'Id: " + id));
+        return enDTO(chercherParId(id));
     }
 
     @Override
@@ -38,12 +44,13 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     }
 
     @Override
+    @Transactional
     public UserResponseDTO createdUser(UserRequestDTO userRequestDTO) {
 
         String email = userRequestDTO.getEmail().trim().toLowerCase();
 
         if (utilisateurRepository.existsByEmail(email)) {
-            throw new RuntimeException(email);
+            throw new EmailAlreadyUsedException(email);
         }
 
         Utilisateur utilisateur = new Utilisateur();
@@ -59,12 +66,17 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     @Override
     public UserResponseDTO editUser(Long id, UserRequestDTO userRequestDTO) {
 
-        Utilisateur utilisateur = utilisateurRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Aucun utilisateur trouvé avec l'Id: " + id));
+        Utilisateur utilisateur = chercherParId(id);
+
+        String email = userRequestDTO.getEmail().trim().toLowerCase();
+
+        if (utilisateurRepository.existsByEmailAndIdNot(email, id)) {
+            throw new EmailAlreadyUsedException(email);
+        }
 
         utilisateur.setNom(userRequestDTO.getNom());
         utilisateur.setPrenom(userRequestDTO.getPrenom());
-        utilisateur.setEmail(userRequestDTO.getEmail());
+        utilisateur.setEmail(email);
 
         Utilisateur updatedUser = utilisateurRepository.save(utilisateur);
 
@@ -72,12 +84,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long id) {
 
-        Utilisateur utilisateur = utilisateurRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Aucun utilisateur trouvé avec l'Id: " + id));
-
-        utilisateurRepository.delete(utilisateur);
+        utilisateurRepository.delete(chercherParId(id));
     }
 
     //MAPPING

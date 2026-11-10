@@ -1,6 +1,7 @@
 package com.demo.AuthApp.controller;
 
 import com.demo.AuthApp.dto.LoginRequestDTO;
+import com.demo.AuthApp.dto.LoginResponseDTO;
 import com.demo.AuthApp.dto.UserRequestDTO;
 import com.demo.AuthApp.dto.UserResponseDTO;
 import com.demo.AuthApp.service.AuthService;
@@ -34,14 +35,19 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO request) {
-
-        try {
-            return ResponseEntity.ok(authService.login(request));
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Email ou mot de passe incorrect"));
-        }
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
+        return ResponseEntity.ok(authService.login(request));
     }
+
+//    @PostMapping("/login")
+//    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO request) {
+//
+//        try {
+//            return ResponseEntity.ok(authService.login(request));
+//        } catch (AuthenticationException e) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                    .body(Map.of("message", "Email ou mot de passe incorrect"));
+//        }
+//    }
 
 }
