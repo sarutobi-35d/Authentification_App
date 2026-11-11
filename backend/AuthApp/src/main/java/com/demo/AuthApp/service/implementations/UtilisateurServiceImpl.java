@@ -90,6 +90,15 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         utilisateurRepository.delete(chercherParId(id));
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public UserResponseDTO trouverParEmail(String email) {
+        return utilisateurRepository.findByEmail(email.trim().toLowerCase())
+                .map(this::enDTO)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Aucun utilisateur trouvé avec l'email : " + email));
+    }
+
     //MAPPING
 
     private Utilisateur enEntity(UserRequestDTO requestDTO){

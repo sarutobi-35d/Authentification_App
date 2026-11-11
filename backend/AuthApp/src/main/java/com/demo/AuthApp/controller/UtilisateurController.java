@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,11 @@ public class UtilisateurController {
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getAllsUser(){
         return ResponseEntity.ok(utilisateurService.getAllUsers());
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> moi(Authentication authentication) {
+        return ResponseEntity.ok(utilisateurService.trouverParEmail(authentication.getName()));
     }
 
     @GetMapping("/{id}")

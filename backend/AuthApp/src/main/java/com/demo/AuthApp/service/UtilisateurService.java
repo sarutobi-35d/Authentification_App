@@ -13,4 +13,7 @@ public interface UtilisateurService {
     UserResponseDTO editUser(Long id, UserRequestDTO userRequestDTO);
     void deleteUser(Long id);
 
+    //Endpoint qui répond : « qui est l’utilisateur de ce token ? » partie React
+    UserResponseDTO trouverParEmail(String email);
+
 }
