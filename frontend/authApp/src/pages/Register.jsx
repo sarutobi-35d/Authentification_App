@@ -16,6 +16,7 @@ function Register() {
 
   const [error, setError] = useState("");
 
+  // Savoir si une inscription est en cours
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {

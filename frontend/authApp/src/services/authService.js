@@ -1,33 +1,19 @@
 import api from "../api/axiosConfig";
-
-const USER_KEY = "user";
+import { getToken, setToken, removeToken } from "../utils/tokenStorage";
 
 export const register = (data) => api.post("/auth/register", data);
 
 export const login = async (data) => {
 
   const response = await api.post("/auth/login", data);
-
-  localStorage.setItem(USER_KEY, JSON.stringify(response.data));
-  
+  setToken(response.data.token);
   return response.data;
-
+  
 };
 
-export const logout = () => {
-  localStorage.removeItem(USER_KEY);
-};
+export const logout = () => removeToken();
 
-export const getCurrentUser = () => {
-
-  try {
-    const stored = localStorage.getItem(USER_KEY);
-    return stored ? JSON.parse(stored) : null;
-  } catch {
-    return null;
-  }
-
-};
+export const isAuthenticated = () => getToken() !== null;
 
 // Les composants n’appellent jamais axios directement : ils passent par ces fonctions. 
 // Si une URL change, la modification se fait à un seul endroit.
